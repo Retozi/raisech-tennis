@@ -55,7 +55,10 @@ def to_int(v):
     try:
         return int(v) if v else None
     except:
-        return int(re.sub("[^0-9]", "", v))
+        try:
+            return int(re.sub("[^0-9]", "", v))
+        except Exception:
+            return None
 
 
 def get_winner_stats(d):
@@ -68,8 +71,8 @@ def get_winner_stats(d):
              'comment': d['Comment'],
              'court': d['Court'],
              'date': d['Date'],
-             'atpRank': d['WRank'],
-             'oppAtpRank': d['LRank'],
+             'atpRank': to_int(d['WRank']),
+             'oppAtpRank': to_int(d['LRank']),
              'round': d['Round'],
              'tournament': d['Tournament'],
              'surface': d['Surface']}
@@ -86,8 +89,8 @@ def get_loser_stats(d):
              'comment': d['Comment'],
              'court': d['Court'],
              'date': d['Date'],
-             'atpRank': d['LRank'],
-             'oppAtpRank': d['WRank'],
+             'atpRank': to_int(d['LRank']),
+             'oppAtpRank': to_int(d['WRank']),
              'round': d['Round'],
              'tournament': d['Tournament'],
              'surface': d['Surface']}
@@ -105,13 +108,22 @@ def transform_structure(data):
             res[loser_name].append(loser_stats)
     return res
 
+SHEETS = {
+    '2012': '2012',
+    '2011': '2011',
+    '2010': '2010'
+}
+
 
 def parse_matches_from_excels():
     unzip_excels()
     dfs = []
     for f in os.listdir(UNPACK_DIR):
         relative_path = os.path.join(UNPACK_DIR, f)
-        dfs.append(pd.read_excel(relative_path))
+        year = os.path.splitext(f)[0]
+        print(year)
+        dfs.append(pd.read_excel(relative_path,
+                                 sheetname=SHEETS.get(year, 0)))
     rmtree(UNPACK_DIR)
     # take care of all the strange numpy types by converting to json
     # then back to dict
