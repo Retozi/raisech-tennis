@@ -75,7 +75,8 @@ def get_winner_stats(d):
              'oppAtpRank': to_int(d['LRank']),
              'round': d['Round'],
              'tournament': d['Tournament'],
-             'surface': d['Surface']}
+             'surface': d['Surface'],
+             'won': True}
     return d['Winner'].replace(" ", ""), stats
 
 
@@ -93,7 +94,8 @@ def get_loser_stats(d):
              'oppAtpRank': to_int(d['WRank']),
              'round': d['Round'],
              'tournament': d['Tournament'],
-             'surface': d['Surface']}
+             'surface': d['Surface'],
+             'won': False}
     return d['Loser'].replace(" ", ""), stats
 
 
